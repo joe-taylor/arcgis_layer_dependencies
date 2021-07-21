@@ -7,7 +7,7 @@ This nodejs app assembles a report containing all the maps on the [Government of
 ```bash
 
 npm i # install packages
-npm start > name_of_report.yml
+node src/index.js > name_of_report.yml
 
 ```
 
