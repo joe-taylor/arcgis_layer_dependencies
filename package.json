@@ -1,0 +1,23 @@
+{
+  "name": "arcgis_layer_dependencies",
+  "version": "1.0.0",
+  "description": "Assemble a report containing all the maps on the [Government of BC Maps ArcGIS page](https://governmentofbc.maps.arcgis.com/home/search.html?t=content&q=&focus=maps-webmaps) along with their layers and tags for dependency tracking.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joe-taylor/arcgis_layer_dependencies.git"
+  },
+  "keywords": [],
+  "author": "Joe Taylor <joseph.taylor@gov.bc.ca> ; Yuhan Freeman <yuhan.freeman@gov.bc.ca>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joe-taylor/arcgis_layer_dependencies/issues"
+  },
+  "homepage": "https://github.com/joe-taylor/arcgis_layer_dependencies#readme",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
