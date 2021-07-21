@@ -20,7 +20,6 @@ async function getAllSearchResults() {
   return results;
 }
 
-
 async function getPageOfSearchResults(page) {
   let params = new URLSearchParams('num=100&start=1&sortField=&sortOrder=desc&q=%20orgid%3Aubm4tcTYICKBpist%20(type%3A("Web%20Map"%20OR%20"CityEngine%20Web%20Scene")%20-type%3A"Web%20Mapping%20Application")%20%20-type%3A"Code%20Attachment"%20-type%3A"Featured%20Items"%20-type%3A"Symbol%20Set"%20-type%3A"Color%20Set"%20-type%3A"Windows%20Viewer%20Add%20In"%20-type%3A"Windows%20Viewer%20Configuration"%20-type%3A"Map%20Area"%20-typekeywords%3A"MapAreaPackage"%20-type%3A"Indoors%20Map%20Configuration"%20-typekeywords%3A"SMX"&f=json');
   params.set("start", page * 100 - 99);
@@ -35,7 +34,6 @@ async function getPageOfSearchResults(page) {
 async function getLayerInfo(layerId) {
   let endpoint = `https://governmentofbc.maps.arcgis.com/sharing/rest/content/items/${encodeURIComponent(layerId)}?f=json`;
 }
-
 
 async function getMapLayers(mapId) {
   let endpoint = `https://governmentofbc.maps.arcgis.com/sharing/rest/content/items/${encodeURIComponent(mapId)}/data?f=json`;
@@ -60,7 +58,7 @@ async function main() {
     title: result.title,
     tags: result.tags,
     numViews: result.numViews
-  })).slice(0, 2);
+  }));
 
   let n = 1;
   for (let map of allResults) {
