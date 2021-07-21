@@ -51,7 +51,7 @@ async function main() {
     title: result.title,
     tags: result.tags,
     numViews: result.numViews
-  })).slice(0,2);
+  }));
 
   let n = 1;
   for (let map of allResults) {
