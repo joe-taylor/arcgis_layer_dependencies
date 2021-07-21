@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "author": "Joe Taylor <joseph.taylor@gov.bc.ca> ; Yuhan Freeman <yuhan.freeman@gov.bc.ca>",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/joe-taylor/arcgis_layer_dependencies/issues"
   },
