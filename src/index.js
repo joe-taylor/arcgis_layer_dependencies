@@ -8,7 +8,6 @@ async function getAllSearchResults() {
   let page = 1;
 
   do {
-    console.log(`Getting page ${page++}`);
     var result = await getPageOfSearchResults(page);
     results = [...results, ...result.results]
   } while (~result.nextStart);
