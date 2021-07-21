@@ -40,3 +40,10 @@ Fields of interest from the items in the results list include:
 ### 2. For each map above, gather the URL/ID, view count, set of tags, and list of attached layers
 
 We can gather some of that information from the search results directly, but for other bits of information (e.g. the list of attached layers) a new request has to be made for each search result. 
+
+### 3. Return all of the above as YAML
+
+We may want to pivot the information in the following ways:
+
+ - Get a flat list of all layers, and in particular, all layers with endpoints that are failing
+ - Get a list of layers associated to maps
