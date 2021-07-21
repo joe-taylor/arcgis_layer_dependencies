@@ -2,6 +2,15 @@
 
 This nodejs app assembles a report containing all the maps on the [Government of BC Maps ArcGIS page](https://governmentofbc.maps.arcgis.com/home/search.html?t=content&q=&focus=maps-webmaps) along with their layers and tags. We are using this to track which maps depend on which layers.
 
+## Usage
+
+```bash
+
+npm i # install packages
+npm start > name_of_report.yml
+
+```
+
 ## Strategy
 
 ### 1. Use Rest API to gather all web maps from the search results
