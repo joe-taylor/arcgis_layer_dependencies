@@ -32,12 +32,21 @@ async function getPageOfSearchResults(page) {
 }
 
 
+async function getLayerInfo(layerId) {
+  let endpoint = `https://governmentofbc.maps.arcgis.com/sharing/rest/content/items/${encodeURIComponent(layerId)}?f=json`;
+}
+
+
 async function getMapLayers(mapId) {
   let endpoint = `https://governmentofbc.maps.arcgis.com/sharing/rest/content/items/${encodeURIComponent(mapId)}/data?f=json`;
   let result = await axios.get(endpoint);
 
   if (result.data.operationalLayers) {
-    return result.data.operationalLayers;
+    return result.data.operationalLayers.map(layer => ({
+      id: layer.id,
+      itemId: layer.itemId,
+      title: layer.title
+    }));
   } else {
     return [];
   }
@@ -51,7 +60,7 @@ async function main() {
     title: result.title,
     tags: result.tags,
     numViews: result.numViews
-  }));
+  })).slice(0, 2);
 
   let n = 1;
   for (let map of allResults) {
