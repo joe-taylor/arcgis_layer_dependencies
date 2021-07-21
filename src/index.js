@@ -37,7 +37,7 @@ async function getMapLayers(mapId) {
   let result = await axios.get(endpoint);
 
   if (result.data.operationalLayers) {
-    return result.data.operationalLayers.map(layer => layer.id);
+    return result.data.operationalLayers;
   } else {
     return [];
   }
@@ -51,10 +51,11 @@ async function main() {
     title: result.title,
     tags: result.tags,
     numViews: result.numViews
-  }));
+  })).slice(0,2);
 
+  let n = 1;
   for (let map of allResults) {
-    console.warn(`Getting layer information for ${map.title}`);
+    console.warn(`${n++}/${allResults.length} Getting layer information for ${map.title}`);
     map.layers = await getMapLayers(map.id);
   }
 
