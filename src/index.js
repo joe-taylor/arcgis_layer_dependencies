@@ -8,6 +8,7 @@ async function getAllSearchResults() {
   let page = 1;
 
   do {
+    if (page > 10) throw new Error("Too many pages! Something probably went wrong.");
     var result = await getPageOfSearchResults(page);
     results = [...results, ...result.results]
   } while (~result.nextStart);
