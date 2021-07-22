@@ -48,13 +48,20 @@ async function getMapLayers(mapId) {
 async function getDetailedLayer(layerItemId) {
   const endpoint = `https://governmentofbc.maps.arcgis.com/sharing/rest/content/items/${encodeURIComponent(layerItemId)}?f=json`;
   
-  return (await axios.get(endpoint)).data;
+  const result = (await axios.get(endpoint)).data;
+  if (result.error) {
+    console.warn(`Unable to get detailed layer for id ${layerItemId} due to ${JSON.stringify(result.error)}`);
+    return null;
+  }
+
+  return result;
 }
 
 async function validateIfLayerUrlWorks(layerUrl){
   const result = (await axios.get(`${layerUrl}?f=json`)).data;
-  if (result.error) {
-    throw new Error();
+  // there are cases when auth is required {"error":{"code":499,"message":"Token Required","details":[]}}
+  if (result.error && result.error.code !== 499) {
+    throw new Error(JSON.stringify(result.error));
   }
 }
 
@@ -93,7 +100,7 @@ async function main() {
   fs.writeFileSync('reports/maps.yml', YAML.stringify(allResults));
 
   const detailedLayerPromises = [...uniqueLayerItemIds].map(layerItemId => getDetailedLayer(layerItemId));
-  const detailedLayers = await Promise.all(detailedLayerPromises);
+  const detailedLayers = (await Promise.all(detailedLayerPromises)).filter(rv => rv !== null);
 
   // insert extra key "isWorking" to detailedLayer
   for (let detailedLayer of detailedLayers) {
