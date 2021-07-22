@@ -1,8 +1,8 @@
 const axios = require('axios');
 const YAML = require('yaml');
+const fs = require('fs');
 
 const SEARCH_ENDPOINT = "https://governmentofbc.maps.arcgis.com/sharing/rest/search";
-
 
 async function getAllSearchResults() {
   let results = [];
@@ -30,11 +30,6 @@ async function getPageOfSearchResults(page) {
   return result.data; // for simplicity's sake, we just assume every request goes through
 }
 
-
-async function getLayerInfo(layerId) {
-  let endpoint = `https://governmentofbc.maps.arcgis.com/sharing/rest/content/items/${encodeURIComponent(layerId)}?f=json`;
-}
-
 async function getMapLayers(mapId) {
   let endpoint = `https://governmentofbc.maps.arcgis.com/sharing/rest/content/items/${encodeURIComponent(mapId)}/data?f=json`;
   let result = await axios.get(endpoint);
@@ -50,9 +45,30 @@ async function getMapLayers(mapId) {
   }
 }
 
+async function getDetailedLayer(layerItemId) {
+  const endpoint = `https://governmentofbc.maps.arcgis.com/sharing/rest/content/items/${encodeURIComponent(layerItemId)}?f=json`;
+  
+  return (await axios.get(endpoint)).data;
+}
+
+async function validateIfLayerUrlWorks(layerUrl){
+  const result = (await axios.get(`${layerUrl}?f=json`)).data;
+  if (result.error) {
+    throw new Error();
+  }
+}
+
+function getRelevantMaps(maps, detailedLayer) {
+  const filteredMaps = maps.filter(map => map.layers.some(layer => layer.itemId === detailedLayer.id));
+
+  return filteredMaps.map(m => ({
+    id: m.id,
+    title: m.title,
+    numViews: m.numViews,
+  }));
+}
 
 async function main() {
-
   let allResults = (await getAllSearchResults()).map(result => ({
     id: result.id,
     title: result.title,
@@ -61,14 +77,50 @@ async function main() {
   }));
 
   let n = 1;
+  const uniqueLayerItemIds= new Set;
+
   for (let map of allResults) {
     console.warn(`${n++}/${allResults.length} Getting layer information for ${map.title}`);
     map.layers = await getMapLayers(map.id);
+
+    for (let layer of map.layers) {
+      if (layer.itemId) {
+        uniqueLayerItemIds.add(layer.itemId);
+      }
+    }
   }
 
-  console.log(YAML.stringify(allResults));
-}
+  fs.writeFileSync('reports/maps.yml', YAML.stringify(allResults));
 
+  const detailedLayerPromises = [...uniqueLayerItemIds].map(layerItemId => getDetailedLayer(layerItemId));
+  const detailedLayers = await Promise.all(detailedLayerPromises);
+
+  // insert extra key "isWorking" to detailedLayer
+  for (let detailedLayer of detailedLayers) {
+    try  {
+      await validateIfLayerUrlWorks(detailedLayer.url);
+
+      detailedLayer.isWorking = true;
+    } catch (e) {
+      detailedLayer.isWorking = false;
+    }
+  }
+
+  // transform object so it's layers as top level instead of maps
+  const layersAsTopLevel = detailedLayers.map(detailedLayer => {
+    const { id, url, title, isWorking} = detailedLayer;
+
+    return {
+      id,
+      title,
+      url,
+      isWorking,
+      maps: getRelevantMaps(allResults, detailedLayer),
+    }
+  });
+
+  fs.writeFileSync('reports/layers.yml', YAML.stringify(layersAsTopLevel));
+}
 
 // ----------
 // Run script
