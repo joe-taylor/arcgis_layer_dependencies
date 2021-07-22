@@ -43,7 +43,8 @@ async function getMapLayers(mapId) {
     return result.data.operationalLayers.map(layer => ({
       id: layer.id,
       itemId: layer.itemId,
-      title: layer.title
+      title: layer.title,
+      url: layer.url
     }));
   } else {
     return [];
